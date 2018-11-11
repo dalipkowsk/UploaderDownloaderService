@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 @Service
 public class FIleUploadServiceImpl implements FileUploadService {
 
-    @Value("${file.directory}")
+    @Value("${file.defaultStorageLocation}")
     private String fileDirectory;
 
     @Override
