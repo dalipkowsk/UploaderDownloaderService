@@ -9,8 +9,8 @@ public class FileUploadException extends IOException {
 
     private static final Logger log = LogManager.getLogger(FileUploadException.class);
 
-    FileUploadException(String message){
+    FileUploadException(IOException exception){
 
-        log.error(message);
+        log.error(exception.getMessage());
     }
 }

@@ -24,8 +24,8 @@ public class FIleUploadServiceImpl implements FileUploadService {
         try {                               //Przez to, że zbyt ogólny jest ten wyjątek, muszę rzucić własny
             fileBytes = file.getBytes();
 
-        } catch (IOException e) {
-            throw new FileUploadException(e.getMessage());
+        } catch (IOException exception) {
+            throw new FileUploadException(exception);
         }
 
         Path filePath = Paths.get(fileDirectory + file.getOriginalFilename());
@@ -33,8 +33,8 @@ public class FIleUploadServiceImpl implements FileUploadService {
         try {
 
             Files.write(filePath, fileBytes);
-        } catch (IOException e) {
-            throw new FileUploadException(e.getMessage());
+        } catch (IOException exception) {
+            throw new FileUploadException(exception);
         }
     }
 }
