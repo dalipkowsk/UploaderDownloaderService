@@ -1,5 +1,7 @@
 package storage.exception;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -11,8 +13,12 @@ import storage.file.FileUploadException;
 @ControllerAdvice(basePackageClasses = FileController.class)
 public class FileExceptionHandler extends ResponseEntityExceptionHandler {
 
+    private static final Logger log = LogManager.getLogger(FileExceptionHandler.class);
+
     @ExceptionHandler(value = FileUploadException.class)
-    protected ResponseEntity uploadFileExceptionHandler(FileUploadException ex){
+    protected ResponseEntity uploadFileExceptionHandler(FileUploadException exception) {
+
+        log.error(exception.getMessage());
 
         return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
