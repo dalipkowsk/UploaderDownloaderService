@@ -1,5 +1,8 @@
 package storage.controller;
 
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import storage.file.FileDownloadService;
 import storage.file.FileUploadService;
 import org.springframework.http.HttpStatus;
@@ -7,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 
@@ -23,7 +27,6 @@ public class FileController {
 
     @PostMapping(name = "/upload", consumes = "multipart/form-data")
     public ResponseEntity upload(@RequestParam(value = "file") MultipartFile file) throws IOException {
-
         fileUploadService.uploadFile(file);
 
         return new ResponseEntity(HttpStatus.OK);
@@ -31,6 +34,14 @@ public class FileController {
 
     @RequestMapping(value = "/download/{item}", method = RequestMethod.GET)
     public ResponseEntity download( @PathVariable String item ) {
-        return fileDownloadService.downloadFile(item);
+        try {
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.setContentType( MediaType.MULTIPART_FORM_DATA );
+            responseHeaders.setContentDispositionFormData("attachment", item);
+            return new ResponseEntity<>(fileDownloadService.downloadFile(item), responseHeaders, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
     }
 }

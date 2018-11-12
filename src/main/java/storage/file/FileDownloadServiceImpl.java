@@ -21,22 +21,13 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     private String fileDirectory;
 
     @Override
-    public ResponseEntity<InputStreamResource> downloadFile(String fileName) {
+    public InputStreamResource downloadFile(String fileName) throws FileNotFoundException {
         Path filePath = Paths.get(fileDirectory + fileName);
-
         File file = new File( filePath.toString() );
 
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.setContentType( MediaType.MULTIPART_FORM_DATA );
-        responseHeaders.setContentLength( file.length() );
-        responseHeaders.setContentDispositionFormData("attachment", fileName);
-
         InputStreamResource inputStreamResource;
-        try {
-            inputStreamResource = new InputStreamResource(new FileInputStream(file));
-        } catch (FileNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(inputStreamResource, responseHeaders, HttpStatus.OK);
+        inputStreamResource = new InputStreamResource(new FileInputStream(file));
+
+        return inputStreamResource;
     }
 }
