@@ -13,16 +13,24 @@ import java.nio.file.Paths;
 @Service
 public class FileDownloadServiceImpl implements FileDownloadService {
 
-    @Value("${file.defaultStorageLocation}")
+    @Value("${file.directory}")
     private String fileDirectory;
 
     @Override
-    public InputStreamResource downloadFile(String fileName) throws FileNotFoundException {
+    public InputStreamResource downloadFile(String fileName) throws FileDownloadException {
         Path filePath = Paths.get(fileDirectory + fileName);
         File file = new File( filePath.toString() );
 
+        System.out.println( fileDirectory );
+        System.out.println( fileName );
+        System.out.println( filePath.toString() );
+
         InputStreamResource inputStreamResource;
-        inputStreamResource = new InputStreamResource(new FileInputStream(file));
+        try {
+            inputStreamResource = new InputStreamResource(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            throw new FileDownloadException( e );
+        }
 
         return inputStreamResource;
     }

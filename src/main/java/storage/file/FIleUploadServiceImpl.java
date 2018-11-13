@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 @Service
 public class FIleUploadServiceImpl implements FileUploadService {
 
-    @Value("${file.defaultStorageLocation}")
+    @Value("${file.directory}")
     private String fileDirectory;
 
     @Override
@@ -23,7 +23,6 @@ public class FIleUploadServiceImpl implements FileUploadService {
 
         try {                               //Przez to, że zbyt ogólny jest ten wyjątek, muszę rzucić własny
             fileBytes = file.getBytes();
-
         } catch (IOException exception) {
             throw new FileUploadException(exception);
         }
@@ -31,7 +30,6 @@ public class FIleUploadServiceImpl implements FileUploadService {
         Path filePath = Paths.get(fileDirectory + file.getOriginalFilename());
 
         try {
-
             Files.write(filePath, fileBytes);
         } catch (IOException exception) {
             throw new FileUploadException(exception);

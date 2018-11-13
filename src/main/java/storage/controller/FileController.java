@@ -2,6 +2,7 @@ package storage.controller;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import storage.file.FileDownloadException;
 import storage.file.FileDownloadService;
 import storage.file.FileUploadService;
 import org.springframework.http.HttpStatus;
@@ -30,16 +31,11 @@ public class FileController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/download/{item}", method = RequestMethod.GET)
-    public ResponseEntity download( @PathVariable String item ) {
-        try {
-            HttpHeaders responseHeaders = new HttpHeaders();
-            responseHeaders.setContentType( MediaType.MULTIPART_FORM_DATA );
-            responseHeaders.setContentDispositionFormData("attachment", item);
-            return new ResponseEntity<>(fileDownloadService.downloadFile(item), responseHeaders, HttpStatus.OK);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
+    @RequestMapping(value = "/download/{file}", method = RequestMethod.GET)
+    public ResponseEntity download( @PathVariable String file ) throws FileDownloadException {
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.setContentType( MediaType.MULTIPART_FORM_DATA );
+        responseHeaders.setContentDispositionFormData("attachment", file);
+        return new ResponseEntity<>(fileDownloadService.downloadFile(file), responseHeaders, HttpStatus.OK);
     }
 }
