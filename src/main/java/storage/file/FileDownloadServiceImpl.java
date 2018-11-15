@@ -21,10 +21,6 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         Path filePath = Paths.get(fileDirectory + fileName);
         File file = new File( filePath.toString() );
 
-        System.out.println( fileDirectory );
-        System.out.println( fileName );
-        System.out.println( filePath.toString() );
-
         InputStreamResource inputStreamResource;
         try {
             inputStreamResource = new InputStreamResource(new FileInputStream(file));

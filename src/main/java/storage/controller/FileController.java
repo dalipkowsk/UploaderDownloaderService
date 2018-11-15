@@ -27,15 +27,11 @@ public class FileController {
     @PostMapping(name = "/upload", consumes = "multipart/form-data")
     public ResponseEntity upload(@RequestParam(value = "file") MultipartFile file) throws IOException {
         fileUploadService.uploadFile(file);
-
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/download/{file}", method = RequestMethod.GET)
-    public ResponseEntity download( @PathVariable String file ) throws FileDownloadException {
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.setContentType( MediaType.MULTIPART_FORM_DATA );
-        responseHeaders.setContentDispositionFormData("attachment", file);
-        return new ResponseEntity<>(fileDownloadService.downloadFile(file), responseHeaders, HttpStatus.OK);
+    @GetMapping(value = "/download/{fileName}", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity download( @PathVariable String fileName ) throws FileDownloadException {
+        return new ResponseEntity<>(fileDownloadService.downloadFile(fileName), HttpStatus.OK);
     }
 }
