@@ -14,6 +14,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import storage.Application;
+import storage.database.FileData;
+import storage.database.FileDataDAO;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -31,6 +33,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = Application.class)
 @AutoConfigureMockMvc
 public class FileControllerIT {
+
+    @Autowired
+    private FileDataDAO fileDataDAO;
 
     @Autowired
     private MockMvc mockMvc;
@@ -69,6 +74,13 @@ public class FileControllerIT {
                 .andReturn();
 
         Assert.assertEquals("test", result.getResponse().getContentAsString() );
+    }
+
+    @Test
+    public void testHibernateToDatabaseConnection() {
+        FileData testFileData = new FileData();
+        testFileData.setTitle("TestFileTest");
+        fileDataDAO.save(testFileData);
     }
 
     @AfterAll
