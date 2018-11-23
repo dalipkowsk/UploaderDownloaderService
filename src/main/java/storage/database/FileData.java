@@ -154,5 +154,27 @@ public class FileData {
         isFileExpired = fileExpired;
     }
 
+    @Override
+    public String toString() {
+        return "FileData{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", ftpAddress='" + ftpAddress + '\'' +
+                ", path='" + path + '\'' +
+                ", hash32='" + hash32 + '\'' +
+                ", fileType='" + fileType + '\'' +
+                ", startUploadTimestamp='" + startUploadTimestamp + '\'' +
+                ", endUploadTimestamp='" + endUploadTimestamp + '\'' +
+                ", downloadCount=" + downloadCount +
+                ", uploaderName='" + uploaderName + '\'' +
+                ", expiryTimestamp='" + expiryTimestamp + '\'' +
+                ", uploaderIPAddress='" + uploaderIPAddress + '\'' +
+                ", fileSizeKB=" + fileSizeKB +
+                ", isPrivate=" + isPrivate +
+                ", passwordHash='" + passwordHash + '\'' +
+                ", isFileExpired=" + isFileExpired +
+                '}';
+    }
+
     public FileData() {  }
 }

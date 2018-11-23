@@ -22,6 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
@@ -81,6 +82,24 @@ public class FileControllerIT {
         FileData testFileData = new FileData();
         testFileData.setTitle("TestFileTest");
         fileDataDAO.save(testFileData);
+    }
+
+    @Test
+    public void testHibernateSelectAll() {
+        FileData testFileData = new FileData();
+        testFileData.setTitle("TestFileTest");
+        FileData testFileData2 = new FileData();
+        testFileData2.setTitle("TestFileTest2");
+        FileData testFileData3 = new FileData();
+        testFileData3.setTitle("TestFileTest3");
+        fileDataDAO.save(testFileData);
+        fileDataDAO.save(testFileData2);
+        fileDataDAO.save(testFileData3);
+
+        List<FileData> dataSet = fileDataDAO.list();
+        for( FileData c : dataSet ) {
+            System.out.println(c.toString());
+        }
     }
 
     @AfterAll
