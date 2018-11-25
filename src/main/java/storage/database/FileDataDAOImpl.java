@@ -5,8 +5,10 @@ import org.hibernate.Transaction;
 
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -26,9 +28,11 @@ public class FileDataDAOImpl implements FileDataDAO {
     public void deleteById(long fileId) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        Query deleteFile = session.createQuery("DELETE FROM filedata f WHERE f.id = :id");
-        deleteFile.setParameter("id", fileId);
-        deleteFile.executeUpdate();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaDelete<FileData> delete = criteriaBuilder.createCriteriaDelete(FileData.class);
+        Root<FileData> root = delete.from(FileData.class);
+        delete.where(criteriaBuilder.in(root.get("id")).value(fileId));
+        session.createQuery(delete).executeUpdate();
         tx.commit();
         session.close();
     }
@@ -36,7 +40,6 @@ public class FileDataDAOImpl implements FileDataDAO {
     @Override
     public List<FileData> list() {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction tx = session.beginTransaction();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<FileData> criteriaQuery = criteriaBuilder.createQuery(FileData.class);
         Root<FileData> root = criteriaQuery.from(FileData.class);

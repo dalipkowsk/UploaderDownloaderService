@@ -78,10 +78,11 @@ public class FileControllerIT {
     }
 
     @Test
-    public void testHibernateToDatabaseConnection() {
+    public void testHibernateInsert() {
         FileData testFileData = new FileData();
         testFileData.setTitle("TestFileTest");
         fileDataDAO.save(testFileData);
+        fileDataDAO.deleteById(1);
     }
 
     @Test
