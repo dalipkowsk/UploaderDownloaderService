@@ -1,33 +1,26 @@
 package storage.database;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.Metadata;
-import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
-/**
- * Skądś skopiowane.
- * @author imssbora
- */
-public class HibernateUtil {
-    private static StandardServiceRegistry registry;
-    private static SessionFactory sessionFactory;
+public class H2HibernateUtil implements IHibernateUtil{
+    private SessionFactory sessionFactory;
+    private final String hibernateConfig = "hibernateH2.cfg.xml";
+    private StandardServiceRegistry registry;
 
-    public static SessionFactory getSessionFactory() {
+    @Override
+    public SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
             try {
-                // Create registry
                 registry = new StandardServiceRegistryBuilder()
-                        .configure()
+                        .configure(hibernateConfig)
                         .build();
 
-                // Create SessionFactory
                 Configuration cfg = new Configuration();
-                cfg.configure("hibernate.cfg.xml");
+                cfg.configure(hibernateConfig);
                 sessionFactory = cfg.buildSessionFactory();
-
             } catch (Exception e) {
                 e.printStackTrace();
                 if (registry != null) {
@@ -38,7 +31,8 @@ public class HibernateUtil {
         return sessionFactory;
     }
 
-    public static void shutdown() {
+    @Override
+    public void shutdown() {
         if (registry != null) {
             StandardServiceRegistryBuilder.destroy(registry);
         }
