@@ -18,13 +18,17 @@ import java.nio.file.Paths;
  * https://stackoverflow.com/questions/47902959/file-upload-progress-in-spring-boot
  */
 @Service
-public class FileUploadServiceImp implements FileUploadService {
+public class FileUploadServiceImpl implements FileUploadService {
 
     @Value("${file.directory}")
     private String fileDirectory;
 
+    private final FileDataDAO fileDataDAO;
+
     @Autowired
-    FileDataDAO fileDataDAO;
+    public FileUploadServiceImpl(FileDataDAO fileDataDAO) {
+        this.fileDataDAO = fileDataDAO;
+    }
 
     @Override
     public void upload(MultipartFile file,

@@ -19,12 +19,14 @@ import java.io.IOException;
 public class FileController {
 
     private static final Logger log = LogManager.getLogger(Application.class);
+    private final FileDownloadService fileDownloadService;
+    private final FileUploadService fileUploadWithParamsService;
 
     @Autowired
-    private FileDownloadService fileDownloadService;
-
-    @Autowired
-    private FileUploadService fileUploadWithParamsService;
+    public FileController(FileDownloadService fileDownloadService, FileUploadService fileUploadWithParamsService) {
+        this.fileDownloadService = fileDownloadService;
+        this.fileUploadWithParamsService = fileUploadWithParamsService;
+    }
 
     @GetMapping(value = "/download/{fileName}", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity download( @PathVariable String fileName ) throws FileDownloadException {

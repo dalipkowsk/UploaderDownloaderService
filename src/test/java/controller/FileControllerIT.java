@@ -55,7 +55,6 @@ public class FileControllerIT {
             "test".getBytes()
     );
 
-
     @Value("${file.directory}")
     private String pathToSaveFile;
 
