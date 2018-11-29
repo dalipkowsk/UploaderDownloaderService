@@ -1,6 +1,7 @@
 package storage.database;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity(name = "filedata")
 public class FileData {
@@ -15,16 +16,21 @@ public class FileData {
     private String path;
     private String hash32;
     private String fileType;
-    private String startUploadTimestamp;
-    private String endUploadTimestamp;
+    private Date startUploadTimestamp;
+    private Date endUploadTimestamp;
     private int downloadCount;
     private String uploaderName;
-    private String expiryTimestamp;
+    private Date expiryTimestamp;
     private String uploaderIPAddress;
-    private int fileSizeKB;
+    private long fileSizeB;
     private boolean isPrivate;
     private String passwordHash;
     private boolean isFileExpired;
+
+    @PrePersist
+    protected void onCreate() {
+        startUploadTimestamp = new Date();
+    }
 
     public long getId() {
         return id;
@@ -74,19 +80,19 @@ public class FileData {
         this.fileType = fileType;
     }
 
-    public String getStartUploadTimestamp() {
+    public Date getStartUploadTimestamp() {
         return startUploadTimestamp;
     }
 
-    public void setStartUploadTimestamp(String startUploadTimestamp) {
+    public void setStartUploadTimestamp(Date startUploadTimestamp) {
         this.startUploadTimestamp = startUploadTimestamp;
     }
 
-    public String getEndUploadTimestamp() {
+    public Date getEndUploadTimestamp() {
         return endUploadTimestamp;
     }
 
-    public void setEndUploadTimestamp(String endUploadTimestamp) {
+    public void setEndUploadTimestamp(Date endUploadTimestamp) {
         this.endUploadTimestamp = endUploadTimestamp;
     }
 
@@ -106,11 +112,11 @@ public class FileData {
         this.uploaderName = uploaderName;
     }
 
-    public String getExpiryTimestamp() {
+    public Date getExpiryTimestamp() {
         return expiryTimestamp;
     }
 
-    public void setExpiryTimestamp(String expiryTimestamp) {
+    public void setExpiryTimestamp(Date expiryTimestamp) {
         this.expiryTimestamp = expiryTimestamp;
     }
 
@@ -122,12 +128,12 @@ public class FileData {
         this.uploaderIPAddress = uploaderIPAddress;
     }
 
-    public int getFileSizeKB() {
-        return fileSizeKB;
+    public long getFileSizeB() {
+        return fileSizeB;
     }
 
-    public void setFileSizeKB(int fileSizeKB) {
-        this.fileSizeKB = fileSizeKB;
+    public void setFileSizeB(long fileSizeKB) {
+        this.fileSizeB = fileSizeKB;
     }
 
     public boolean isPrivate() {
@@ -169,7 +175,7 @@ public class FileData {
                 ", uploaderName='" + uploaderName + '\'' +
                 ", expiryTimestamp='" + expiryTimestamp + '\'' +
                 ", uploaderIPAddress='" + uploaderIPAddress + '\'' +
-                ", fileSizeKB=" + fileSizeKB +
+                ", fileSizeB=" + fileSizeB +
                 ", isPrivate=" + isPrivate +
                 ", passwordHash='" + passwordHash + '\'' +
                 ", isFileExpired=" + isFileExpired +

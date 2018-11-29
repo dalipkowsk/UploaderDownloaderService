@@ -1,5 +1,7 @@
 package controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.AfterAll;
@@ -14,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import storage.Application;
 import storage.database.FileData;
 import storage.database.FileDataDAO;
@@ -37,6 +40,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class FileControllerIT {
 
+    private static final Logger log = LogManager.getLogger(FileControllerIT.class);
+
     @Autowired
     private FileDataDAO fileDataDAO;
 
@@ -50,6 +55,7 @@ public class FileControllerIT {
             "test".getBytes()
     );
 
+
     @Value("${file.directory}")
     private String pathToSaveFile;
 
@@ -61,6 +67,28 @@ public class FileControllerIT {
                 .andExpect(status().isOk());
 
         assertTrue(Files.exists(Paths.get((pathToSaveFile))));
+    }
+
+    @Test
+    public void shouldSaveFileWithParams() throws Exception {
+
+        MockMultipartFile firstFile = new MockMultipartFile("file",
+                "filename.txt",
+                "text/plain",
+                "test".getBytes());
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/uploadWithParams")
+                .file(firstFile)
+                .param("title", "My mate switch on alarm")
+                .param("author", "Sun"))
+                .andExpect(status().is(200));
+
+        List<FileData> dataList = fileDataDAO.list();
+        for(FileData p : dataList) {
+            log.info( p.toString() );
+        }
+
+        assertTrue(Files.exists(Paths.get(pathToSaveFile + "filename.txt")));
     }
 
     @Test
@@ -101,7 +129,7 @@ public class FileControllerIT {
 
         List<FileData> dataSet = fileDataDAO.list();
         for( FileData c : dataSet ) {
-            System.out.println(c.toString());
+            log.info(c.toString());
         }
     }
 
