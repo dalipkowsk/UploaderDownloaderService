@@ -18,7 +18,7 @@ import java.nio.file.Paths;
  * https://stackoverflow.com/questions/47902959/file-upload-progress-in-spring-boot
  */
 @Service
-public class FileUploadWithParamsServiceImpl implements FileUploadWithParamsService {
+public class FileUploadServiceImp implements FileUploadService {
 
     @Value("${file.directory}")
     private String fileDirectory;
@@ -27,10 +27,10 @@ public class FileUploadWithParamsServiceImpl implements FileUploadWithParamsServ
     FileDataDAO fileDataDAO;
 
     @Override
-    public void uploadWithParams(MultipartFile file,
-                                 String title,
-                                 String author,
-                                 HttpServletRequest request) throws IOException {
+    public void upload(MultipartFile file,
+                       String title,
+                       String author,
+                       HttpServletRequest request) throws IOException {
         FileData fileData = new FileData();
 
         byte[] fileBytes;
@@ -38,7 +38,7 @@ public class FileUploadWithParamsServiceImpl implements FileUploadWithParamsServ
         try {                               //Przez to, że zbyt ogólny jest ten wyjątek, muszę rzucić własny
             fileBytes = file.getBytes();
         } catch (IOException exception) {
-            throw new FileUploadWithParamsException(exception);
+            throw new FileUploadException(exception);
         }
 
         Path filePath = Paths.get(fileDirectory + file.getOriginalFilename());
@@ -46,7 +46,7 @@ public class FileUploadWithParamsServiceImpl implements FileUploadWithParamsServ
         try {
             Files.write(filePath, fileBytes);
         } catch (IOException exception) {
-            throw new FileUploadWithParamsException(exception);
+            throw new FileUploadException(exception);
         }
 
         fileData.setTitle(title);

@@ -60,16 +60,6 @@ public class FileControllerIT {
     private String pathToSaveFile;
 
     @Test
-    public void shouldSaveFile() throws Exception {
-
-        this.mockMvc
-                .perform(fileUpload("/storage/file").file(file))
-                .andExpect(status().isOk());
-
-        assertTrue(Files.exists(Paths.get((pathToSaveFile))));
-    }
-
-    @Test
     public void shouldSaveFileWithParams() throws Exception {
 
         MockMultipartFile firstFile = new MockMultipartFile("file",
@@ -77,7 +67,7 @@ public class FileControllerIT {
                 "text/plain",
                 "test".getBytes());
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/uploadWithParams")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/upload")
                 .file(firstFile)
                 .param("title", "My mate switch on alarm")
                 .param("author", "Sun"))

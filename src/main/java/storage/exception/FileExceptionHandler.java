@@ -10,20 +10,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import storage.controller.FileController;
 import storage.file.FileDownloadException;
 import storage.file.FileUploadException;
-import storage.file.FileUploadWithParamsException;
 
 @ControllerAdvice(basePackageClasses = FileController.class)
 public class FileExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger log = LogManager.getLogger(FileExceptionHandler.class);
-
-    @ExceptionHandler(value = FileUploadException.class)
-    protected ResponseEntity uploadFileExceptionHandler(FileUploadException exception) {
-
-        log.error(exception.getMessage());
-
-        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 
     @ExceptionHandler(value = FileDownloadException.class)
     protected ResponseEntity downloadFileExceptionHandler(FileDownloadException exception) {
@@ -33,8 +24,8 @@ public class FileExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(value = FileUploadWithParamsException.class)
-    protected ResponseEntity fileUploadWithParamsHandler(FileUploadWithParamsException exception) {
+    @ExceptionHandler(value = FileUploadException.class)
+    protected ResponseEntity fileUploadWithParamsHandler(FileUploadException exception) {
 
         log.error(exception.getMessage());
 
