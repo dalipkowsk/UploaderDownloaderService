@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 
 /**
  * https://stackoverflow.com/questions/47902959/file-upload-progress-in-spring-boot
@@ -23,6 +24,9 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Value("${file.directory}")
     private String fileDirectory;
 
+    @Value("http://localhost:8080")
+    private String serverAddress;
+
     private final FileDataDAO fileDataDAO;
 
     @Autowired
@@ -30,11 +34,16 @@ public class FileUploadServiceImpl implements FileUploadService {
         this.fileDataDAO = fileDataDAO;
     }
 
+    @Autowired
+    private HashProviderService hashProviderService;
+
     @Override
-    public void upload(MultipartFile file,
+    public FileLinkDTO upload(MultipartFile file,
                        String title,
                        String author,
-                       HttpServletRequest request) throws IOException {
+                       boolean isPrivate,
+                       String password,
+                       HttpServletRequest request) throws FileUploadException, HashProviderException {
         FileData fileData = new FileData();
 
         byte[] fileBytes;
@@ -53,20 +62,31 @@ public class FileUploadServiceImpl implements FileUploadService {
             throw new FileUploadException(exception);
         }
 
+        Date date = new Date();
+        String fileHash = hashProviderService.generateHashFromString( date.toString() );
+
         fileData.setTitle(title);
         fileData.setPath(fileDirectory + file.getOriginalFilename());
-            //fileData.setHash32();
+        fileData.setFileName( file.getOriginalFilename() );
+        fileData.setHash32(fileHash);
         fileData.setFileType( FilenameUtils.getExtension(file.getOriginalFilename()) );
-            //fileData.setStartUploadTimestamp();
+        fileData.setStartUploadTimestamp( date );
             //fileData.setEndUploadTimestamp();
         fileData.setUploaderName(author);
             //fileData.setExpiryTimestamp();
         fileData.setUploaderIPAddress(request.getRemoteAddr());
         fileData.setFileSizeB(file.getSize());
-        fileData.setPrivate(false);
-            //fileData.setPasswordHash();
-        fileData.setFileExpired(false);
+        fileData.setPrivate(isPrivate);
 
+        if( isPrivate ) {
+            String passwordHash = hashProviderService.generateHashFromString( password );
+            fileData.setPasswordHash( passwordHash );
+        }
+        fileData.setFileExpired(false);
         fileDataDAO.save(fileData);
+
+        FileLinkDTO fileLinkDTO = new FileLinkDTO();
+        fileLinkDTO.setFullLink( serverAddress + "/download/" + fileHash );
+        return fileLinkDTO;
     }
 }

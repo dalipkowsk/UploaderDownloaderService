@@ -12,6 +12,7 @@ public class FileData {
     private long id;
 
     private String title;
+    private String fileName;
     private String ftpAddress;
     private String path;
     private String hash32;
@@ -26,11 +27,6 @@ public class FileData {
     private boolean isPrivate;
     private String passwordHash;
     private boolean isFileExpired;
-
-    @PrePersist
-    protected void onCreate() {
-        startUploadTimestamp = new Date();
-    }
 
     public long getId() {
         return id;
@@ -165,15 +161,16 @@ public class FileData {
         return "FileData{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
+                ", fileName='" + fileName + '\'' +
                 ", ftpAddress='" + ftpAddress + '\'' +
                 ", path='" + path + '\'' +
                 ", hash32='" + hash32 + '\'' +
                 ", fileType='" + fileType + '\'' +
-                ", startUploadTimestamp='" + startUploadTimestamp + '\'' +
-                ", endUploadTimestamp='" + endUploadTimestamp + '\'' +
+                ", startUploadTimestamp=" + startUploadTimestamp +
+                ", endUploadTimestamp=" + endUploadTimestamp +
                 ", downloadCount=" + downloadCount +
                 ", uploaderName='" + uploaderName + '\'' +
-                ", expiryTimestamp='" + expiryTimestamp + '\'' +
+                ", expiryTimestamp=" + expiryTimestamp +
                 ", uploaderIPAddress='" + uploaderIPAddress + '\'' +
                 ", fileSizeB=" + fileSizeB +
                 ", isPrivate=" + isPrivate +
@@ -183,4 +180,12 @@ public class FileData {
     }
 
     public FileData() {  }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 }

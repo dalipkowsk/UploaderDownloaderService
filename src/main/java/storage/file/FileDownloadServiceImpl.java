@@ -1,8 +1,11 @@
 package storage.file;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
+import storage.database.FileData;
+import storage.database.FileDataDAO;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,9 +19,14 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     @Value("${file.directory}")
     private String fileDirectory;
 
+    @Autowired
+    FileDataDAO fileDataDAO;
+
     @Override
-    public InputStreamResource downloadFile(String fileName) throws FileDownloadException {
-        Path filePath = Paths.get(fileDirectory + fileName);
+    public InputStreamResource downloadFile(String fileHash) throws FileDownloadException {
+
+        FileData fileData = fileDataDAO.getFileDataByHash32(fileHash);
+        Path filePath = Paths.get(fileData.getPath());
         File file = new File( filePath.toString() );
 
         InputStreamResource inputStreamResource;

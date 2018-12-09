@@ -1,5 +1,6 @@
 package controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
@@ -16,10 +17,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import storage.Application;
 import storage.database.FileData;
 import storage.database.FileDataDAO;
+import storage.file.FileLinkDTO;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -66,18 +69,35 @@ public class FileControllerIT {
                 "text/plain",
                 "test".getBytes());
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/upload")
+        MvcResult resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/upload")
                 .file(firstFile)
                 .param("title", "My mate switch on alarm")
-                .param("author", "Sun"))
-                .andExpect(status().is(200));
+                .param("author", "Sun")
+                .param("isPrivate", "false")
+                .param("password", ""))
+                .andExpect(status().is(200))
+                .andReturn();
 
         List<FileData> dataList = fileDataDAO.list();
         for(FileData p : dataList) {
             log.info( p.toString() );
         }
 
-        assertTrue(Files.exists(Paths.get(pathToSaveFile + "filename.txt")));
+        String content = resultActions.getResponse().getContentAsString();
+        log.info( content );
+
+        //NOW DOWNLOAD
+        ObjectMapper mapper = new ObjectMapper();
+        FileLinkDTO fileLinkDTO = mapper.readValue(content, FileLinkDTO.class);
+
+        MvcResult result = mockMvc
+                .perform(get( fileLinkDTO.getFullLink() )
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Assert.assertEquals("test", result.getResponse().getContentAsString() );
+        //assertTrue(Files.exists(Paths.get(pathToSaveFile + "filename.txt")));
     }
 
     @Test

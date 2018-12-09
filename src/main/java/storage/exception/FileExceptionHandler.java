@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import storage.controller.FileController;
 import storage.file.FileDownloadException;
 import storage.file.FileUploadException;
+import storage.file.HashProviderException;
 
 @ControllerAdvice(basePackageClasses = FileController.class)
 public class FileExceptionHandler extends ResponseEntityExceptionHandler {
@@ -28,6 +29,13 @@ public class FileExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity fileUploadWithParamsHandler(FileUploadException exception) {
 
         log.error(exception.getMessage());
+
+        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = HashProviderException.class)
+    protected ResponseEntity hashProviderExceptionHander(HashProviderException exception) {
+        log.error( exception.getMessage());
 
         return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }

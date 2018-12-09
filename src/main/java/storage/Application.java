@@ -1,5 +1,6 @@
 package storage;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -15,24 +16,5 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
-    @Bean
-    @Profile("develop")
-    public IHibernateUtil returnMySQLHibernateUtil() {
 
-        return new MySQLHibernateUtil();
-    }
-
-    @Bean
-    @Profile("test")
-    public IHibernateUtil returnH2HibernateUtil() {
-
-        return new H2HibernateUtil();
-    }
-
-    @Primary
-    @Bean
-    public FileDataDAOImpl returnFileDataDAO(){
-
-        return new FileDataDAOImpl();
-    }
 }

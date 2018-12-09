@@ -5,11 +5,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import storage.Application;
-import storage.file.FileDownloadException;
-import storage.file.FileDownloadService;
+import storage.file.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import storage.file.FileUploadService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -28,9 +26,9 @@ public class FileController {
         this.fileUploadWithParamsService = fileUploadWithParamsService;
     }
 
-    @GetMapping(value = "/download/{fileName}", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity download( @PathVariable String fileName ) throws FileDownloadException {
-        return new ResponseEntity<>(fileDownloadService.downloadFile(fileName), HttpStatus.OK);
+    @GetMapping(value = "/download/{fileHash}", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity download( @PathVariable String fileHash ) throws FileDownloadException {
+        return new ResponseEntity<>(fileDownloadService.downloadFile(fileHash), HttpStatus.OK);
     }
 
     @PostMapping(name = "/upload", consumes = "multipart/form-data")
@@ -38,9 +36,11 @@ public class FileController {
             @RequestParam(value = "file") MultipartFile file,
             @RequestParam(value = "title") String title,
             @RequestParam(value = "author") String author,
+            @RequestParam(value = "isPrivate") boolean isPrivate,
+            @RequestParam(value = "password") String password,
             HttpServletRequest request
-    ) throws IOException {
-        fileUploadWithParamsService.upload(file, title, author, request);
-        return new ResponseEntity(HttpStatus.OK);
+    ) throws FileUploadException, HashProviderException {
+        FileLinkDTO fileLinkDTO = fileUploadWithParamsService.upload(file, title, author, isPrivate, password, request);
+        return new ResponseEntity(fileLinkDTO, HttpStatus.OK);
     }
 }

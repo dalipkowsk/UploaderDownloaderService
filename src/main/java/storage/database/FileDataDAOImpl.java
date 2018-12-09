@@ -15,6 +15,8 @@ import java.util.List;
 @Service
 public class FileDataDAOImpl implements FileDataDAO {
 
+    //https://docs.oracle.com/javaee/6/tutorial/doc/gjivm.html
+
     @Autowired
     private IHibernateUtil hibernateUtil;
 
@@ -49,5 +51,20 @@ public class FileDataDAOImpl implements FileDataDAO {
         criteriaQuery.select(root);
         Query query = session.createQuery(criteriaQuery);
         return (List<FileData>) query.getResultList();
+    }
+
+    @Override
+    public FileData getFileDataByHash32(String hash32){
+        Session session = hibernateUtil.getSessionFactory().openSession();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<FileData> criteriaQuery = criteriaBuilder.createQuery(FileData.class);
+        Root<FileData> fileData = criteriaQuery.from(FileData.class);
+
+        criteriaQuery.where(criteriaBuilder.equal(fileData.get("hash32"), hash32));
+        Query query = session.createQuery(criteriaQuery);
+        query.setMaxResults(1);
+
+        List<FileData> resultList = query.getResultList();
+        return resultList.get(0);
     }
 }
