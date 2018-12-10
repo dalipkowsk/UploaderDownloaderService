@@ -44,7 +44,10 @@ public class FileUploadServiceImpl implements FileUploadService {
                        boolean isPrivate,
                        String password,
                        HttpServletRequest request) throws FileUploadException, HashProviderException {
+
         FileData fileData = new FileData();
+        Date date = new Date();
+        String fileHash = hashProviderService.generateHashFromString( date.toString() );
 
         byte[] fileBytes;
 
@@ -54,7 +57,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             throw new FileUploadException(exception);
         }
 
-        Path filePath = Paths.get(fileDirectory + file.getOriginalFilename());
+        Path filePath = Paths.get(fileDirectory + fileHash);
 
         try {
             Files.write(filePath, fileBytes);
@@ -62,11 +65,8 @@ public class FileUploadServiceImpl implements FileUploadService {
             throw new FileUploadException(exception);
         }
 
-        Date date = new Date();
-        String fileHash = hashProviderService.generateHashFromString( date.toString() );
-
         fileData.setTitle(title);
-        fileData.setPath(fileDirectory + file.getOriginalFilename());
+        fileData.setPath( filePath.toString() );
         fileData.setFileName( file.getOriginalFilename() );
         fileData.setHash32(fileHash);
         fileData.setFileType( FilenameUtils.getExtension(file.getOriginalFilename()) );

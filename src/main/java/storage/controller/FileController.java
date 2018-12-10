@@ -3,6 +3,7 @@ package storage.controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.*;
 import storage.Application;
 import storage.file.*;
@@ -28,7 +29,10 @@ public class FileController {
 
     @GetMapping(value = "/download/{fileHash}", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity download( @PathVariable String fileHash ) throws FileDownloadException {
-        return new ResponseEntity<>(fileDownloadService.downloadFile(fileHash), HttpStatus.OK);
+        FileWithHeaderDTO fileWithHeaderDTO = fileDownloadService.downloadFile(fileHash);
+        return new ResponseEntity<>(fileWithHeaderDTO.getFileContent(),
+                fileWithHeaderDTO.getHttpHeaders(),
+                HttpStatus.OK);
     }
 
     @PostMapping(name = "/upload", consumes = "multipart/form-data")
@@ -40,7 +44,12 @@ public class FileController {
             @RequestParam(value = "password") String password,
             HttpServletRequest request
     ) throws FileUploadException, HashProviderException {
-        FileLinkDTO fileLinkDTO = fileUploadWithParamsService.upload(file, title, author, isPrivate, password, request);
+        FileLinkDTO fileLinkDTO = fileUploadWithParamsService.upload(file,
+                title,
+                author,
+                isPrivate,
+                password,
+                request);
         return new ResponseEntity(fileLinkDTO, HttpStatus.OK);
     }
 }
