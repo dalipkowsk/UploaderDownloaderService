@@ -1,5 +1,6 @@
 package storage.file;
 
+import org.hibernate.annotations.Synchronize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -13,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 @Service
 public class FileDownloadServiceImpl implements FileDownloadService {
@@ -23,13 +25,29 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     @Autowired
     FileDataDAO fileDataDAO;
 
+    @Autowired
+    HashProviderService hashProviderService;
+
     @Override
-    public FileWithHeaderDTO downloadFile(String fileHash) throws FileDownloadException {
+    public FileWithHeaderDTO downloadFile(String fileHash, Optional<String> password) throws FileDownloadException,
+            HashProviderException {
 
         FileData fileData = fileDataDAO.getFileDataByHash32(fileHash);
+
+        if( fileData.isPrivate() && !password.isPresent()) return null;
+
+        if( fileData.isPrivate() && !(hashProviderService.generateHashFromString(password.get()))
+                .equals(fileData.getPasswordHash())) {
+            return null;
+        } else {
+            return prepareFileWithHeaderDTO(fileData);
+        }
+    }
+
+    private FileWithHeaderDTO prepareFileWithHeaderDTO( FileData fileData ) throws FileDownloadException {
+
         Path filePath = Paths.get(fileData.getPath());
         File hashedFile = new File( filePath.toString() );
-
 
         InputStreamResource inputStreamResource;
         try {

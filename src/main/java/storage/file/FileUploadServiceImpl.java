@@ -86,7 +86,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         fileDataDAO.save(fileData);
 
         FileLinkDTO fileLinkDTO = new FileLinkDTO();
-        fileLinkDTO.setFullLink( serverAddress + "/download/" + fileHash );
+        fileLinkDTO.setFullLink( serverAddress + "/preview/" + fileHash );
         return fileLinkDTO;
     }
 }

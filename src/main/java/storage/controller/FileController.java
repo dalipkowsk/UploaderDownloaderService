@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Optional;
 
 
 @RestController(value = "/storage/file")
@@ -27,12 +28,19 @@ public class FileController {
         this.fileUploadWithParamsService = fileUploadWithParamsService;
     }
 
-    @GetMapping(value = "/download/{fileHash}", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity download( @PathVariable String fileHash ) throws FileDownloadException {
-        FileWithHeaderDTO fileWithHeaderDTO = fileDownloadService.downloadFile(fileHash);
-        return new ResponseEntity<>(fileWithHeaderDTO.getFileContent(),
-                fileWithHeaderDTO.getHttpHeaders(),
-                HttpStatus.OK);
+    @GetMapping(value = {"/download/{fileHash}", "/download/{fileHash}/{password}"},
+            produces = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity download( @PathVariable("fileHash") String fileHash, @PathVariable("password") Optional<String> password )
+            throws FileDownloadException, HashProviderException {
+        FileWithHeaderDTO fileWithHeaderDTO = fileDownloadService.downloadFile(fileHash,password);
+
+        if( fileWithHeaderDTO == null )
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        else {
+            return new ResponseEntity<>(fileWithHeaderDTO.getFileContent(),
+                    fileWithHeaderDTO.getHttpHeaders(),
+                    HttpStatus.OK);
+        }
     }
 
     @PostMapping(name = "/upload", consumes = "multipart/form-data")
