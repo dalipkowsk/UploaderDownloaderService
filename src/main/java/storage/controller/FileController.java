@@ -3,19 +3,18 @@ package storage.controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.*;
 import storage.Application;
-import storage.file.*;
+import storage.database.FileDataNotFoundInDBException;
+import storage.service.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.Optional;
 
 
-@RestController(value = "/storage/file")
+@RestController(value = "/storage/service")
 public class FileController {
 
     private static final Logger log = LogManager.getLogger(Application.class);
@@ -31,16 +30,14 @@ public class FileController {
     @GetMapping(value = {"/download/{fileHash}", "/download/{fileHash}/{password}"},
             produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity download( @PathVariable("fileHash") String fileHash, @PathVariable("password") Optional<String> password )
-            throws FileDownloadException, HashProviderException {
+            throws FileDownloadException, HashProviderException,
+            InvalidPasswordException, PasswordRequiredException,
+            FileDataNotFoundInDBException {
         FileWithHeaderDTO fileWithHeaderDTO = fileDownloadService.downloadFile(fileHash,password);
 
-        if( fileWithHeaderDTO == null )
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        else {
-            return new ResponseEntity<>(fileWithHeaderDTO.getFileContent(),
-                    fileWithHeaderDTO.getHttpHeaders(),
-                    HttpStatus.OK);
-        }
+        return new ResponseEntity<>(fileWithHeaderDTO.getFileContent(),
+                fileWithHeaderDTO.getHttpHeaders(),
+                HttpStatus.OK);
     }
 
     @PostMapping(name = "/upload", consumes = "multipart/form-data")

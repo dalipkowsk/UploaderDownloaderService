@@ -1,8 +1,9 @@
-package storage.file;
+package storage.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import storage.database.FileDataNotFoundInDBException;
 import storage.database.FileData;
 import storage.database.FileDataDAO;
 
@@ -12,10 +13,10 @@ public class FilePreviewServiceImpl implements FilePreviewService{
     @Autowired
     private FileDataDAO fileDataDAO;
 
-    @Value("http://localhost:8080")
+    @Value("${file.localAddress}")
     private String serverAddress;
 
-    public FileInfoDTO getFilePreview(String fileHash){
+    public FileInfoDTO getFilePreview(String fileHash) throws FileDataNotFoundInDBException {
 
         FileInfoDTO fileInfoDTO = new FileInfoDTO();
         FileData fileData = fileDataDAO.getFileDataByHash32(fileHash);

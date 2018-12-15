@@ -6,8 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import storage.file.FileInfoDTO;
-import storage.file.FilePreviewService;
+import storage.database.FileDataNotFoundInDBException;
+import storage.service.FileInfoDTO;
+import storage.service.FilePreviewService;
 
 @RestController(value = "/storage/fileinfo")
 public class FilePreviewController {
@@ -16,7 +17,7 @@ public class FilePreviewController {
     FilePreviewService filePreviewService;
 
     @GetMapping(value = "/preview/{fileHash}")
-    public ResponseEntity previewFile(@PathVariable String fileHash){
+    public ResponseEntity previewFile(@PathVariable String fileHash) throws FileDataNotFoundInDBException {
 
         FileInfoDTO fileInfoDTO = filePreviewService.getFilePreview(fileHash);
         return new ResponseEntity(fileInfoDTO, HttpStatus.OK);

@@ -48,7 +48,7 @@ public class DatabaseHibernateTest {
             "test".getBytes()
     );
 
-    @Value("${file.directory}")
+    @Value("${service.directory}")
     private String pathToSaveFile;
 
     @Test

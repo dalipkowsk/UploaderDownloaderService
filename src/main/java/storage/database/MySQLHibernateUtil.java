@@ -4,11 +4,14 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 
 public class MySQLHibernateUtil implements IHibernateUtil{
+
+    @Value("${file.hibernate.mysqlconfig}")
+    private String hibernateConfig;
     private StandardServiceRegistry registry;
     private SessionFactory sessionFactory;
-    private final String hibernateConfig = "hibernateMySQL.cfg.xml";
 
     public SessionFactory getSessionFactory() {
         if (sessionFactory == null) {

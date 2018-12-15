@@ -17,9 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import storage.Application;
-import storage.database.FileDataDAO;
-import storage.file.FileInfoDTO;
-import storage.file.FileLinkDTO;
+import storage.service.FileInfoDTO;
+import storage.service.FileLinkDTO;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

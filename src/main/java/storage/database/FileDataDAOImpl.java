@@ -31,6 +31,7 @@ public class FileDataDAOImpl implements FileDataDAO {
 
     @Override
     public void deleteById(long fileId) {
+
         Session session = hibernateUtil.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
@@ -44,6 +45,7 @@ public class FileDataDAOImpl implements FileDataDAO {
 
     @Override
     public List<FileData> list() {
+
         Session session = hibernateUtil.getSessionFactory().openSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<FileData> criteriaQuery = criteriaBuilder.createQuery(FileData.class);
@@ -54,7 +56,8 @@ public class FileDataDAOImpl implements FileDataDAO {
     }
 
     @Override
-    public FileData getFileDataByHash32(String hash32){
+    public FileData getFileDataByHash32(String hash32) throws FileDataNotFoundInDBException {
+
         Session session = hibernateUtil.getSessionFactory().openSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<FileData> criteriaQuery = criteriaBuilder.createQuery(FileData.class);
@@ -65,6 +68,8 @@ public class FileDataDAOImpl implements FileDataDAO {
         query.setMaxResults(1);
 
         List<FileData> resultList = query.getResultList();
+        if(resultList.size() == 0) throw new FileDataNotFoundInDBException();
+
         return resultList.get(0);
     }
 }

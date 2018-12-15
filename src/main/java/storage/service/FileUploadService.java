@@ -1,10 +1,8 @@
-package storage.file;
+package storage.service;
 
-import org.apache.tomcat.util.http.fileupload.FileUpload;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 
 public interface FileUploadService {
 

@@ -1,4 +1,4 @@
-package storage.file;
+package storage.service;
 
 import org.springframework.stereotype.Service;
 

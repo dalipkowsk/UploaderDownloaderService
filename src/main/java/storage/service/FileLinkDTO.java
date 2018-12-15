@@ -1,4 +1,4 @@
-package storage.file;
+package storage.service;
 
 public class FileLinkDTO {
 

@@ -1,4 +1,4 @@
-package storage.file;
+package storage.service;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -24,7 +25,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Value("${file.directory}")
     private String fileDirectory;
 
-    @Value("http://localhost:8080")
+    @Value("${file.localAddress}")
     private String serverAddress;
 
     private final FileDataDAO fileDataDAO;
@@ -49,6 +50,12 @@ public class FileUploadServiceImpl implements FileUploadService {
         Date date = new Date();
         String fileHash = hashProviderService.generateHashFromString( date.toString() );
 
+        //CALCULATE EXPIRY DATE
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DATE, 30);
+        Date expiryDate = calendar.getTime();
+
         byte[] fileBytes;
 
         try {                               //Przez to, że zbyt ogólny jest ten wyjątek, muszę rzucić własny
@@ -71,9 +78,8 @@ public class FileUploadServiceImpl implements FileUploadService {
         fileData.setHash32(fileHash);
         fileData.setFileType( FilenameUtils.getExtension(file.getOriginalFilename()) );
         fileData.setStartUploadTimestamp( date );
-            //fileData.setEndUploadTimestamp();
         fileData.setUploaderName(author);
-            //fileData.setExpiryTimestamp();
+        fileData.setExpiryTimestamp( expiryDate );
         fileData.setUploaderIPAddress(request.getRemoteAddr());
         fileData.setFileSizeB(file.getSize());
         fileData.setPrivate(isPrivate);
